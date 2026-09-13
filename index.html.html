@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ศาลายา สมองดี ชีวีมีสุข | ระบบคัดกรองสุขภาพผู้สูงอายุ</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Sarabun & Prompt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js for stats -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            salaya: {
+              navy: '#0d47a1',
+              blue: '#1976d2',
+              sky: '#e3f2fd',
+              green: '#2e7d32',
+              lightGreen: '#4caf50',
+              softGreen: '#e8f5e9',
+              coral: '#e53935',
+              accent: '#f57c00'
+            }
+          },
+          fontFamily: {
+            heading: ['Prompt', 'sans-serif'],
+            body: ['Sarabun', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background-color: #f4f7f6;
+      color: #263238;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Prompt', sans-serif;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    /* Print styles for exportable PDF / Medical Certificate */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        background: white;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Top Navigation / Banner -->
+  <header class="bg-gradient-to-r from-blue-900 via-blue-800 to-emerald-700 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-3 text-center sm:text-left">
+          <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center p-1.5 shadow-md flex-shrink-0">
+            <!-- Medical Brain & Leaf SVG Badge -->
+            <svg viewBox="0 0 100 100" class="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M45 25C35 25 28 33 28 42C28 46 30 50 33 53C29 57 28 63 30 68C32 74 38 78 45 78C47 78 48 78 50 77C52 78 53 78 55 78C62 78 68 74 70 68C72 63 71 57 67 53C70 50 72 46 72 42C72 33 65 25 55 25C52 25 48 26 45 28C47 26 48 25 45 25Z" fill="#1976D2" opacity="0.85"/>
+              <path d="M50 30C58 30 65 37 65 45C65 49 63 53 60 56C64 59 65 65 63 70C61 75 56 79 50 79C47 79 44 78 42 77C46 76 52 71 54 65C56 59 54 53 51 47C49 42 50 34 50 30Z" fill="#E53935" opacity="0.85"/>
+              <path d="M50 48C46 44 38 44 35 48C31 53 34 60 40 65L50 74L60 65C66 60 69 53 65 48C62 44 54 44 50 48Z" fill="#ffffff"/>
+              <path d="M48 88C35 84 25 72 25 55C35 55 45 62 48 75C49 79 49 84 48 88Z" fill="#2E7D32"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 justify-center sm:justify-start">
+              <span class="text-xs uppercase tracking-wider bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 px-2 py-0.5 rounded-full font-semibold">โครงการสร้างสุขผู้สูงวัย</span>
+              <span id="cloudStatus" class="inline-flex items-center text-xs text-emerald-300 gap-1 bg-black/20 px-2 py-0.5 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping inline-block"></span> เชื่อมต่อระบบกลางแล้ว
+              </span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white drop-shadow-sm">ศาลายา สมองดี ชีวีมีสุข</h1>
+            <p class="text-xs text-blue-100 hidden sm:block">ศูนย์การแพทย์กาญจนาภิเษก คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</p>
+          </div>
+        </div>
+
+        <!-- Tab Switching -->
+        <nav class="flex bg-blue-950/60 p-1.5 rounded-xl border border-white/10 shadow-inner">
+          <button id="navScreeningBtn" onclick="switchView('screening')" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-blue-900 shadow">
+            <i data-lucide="clipboard-check" class="w-4 h-4"></i>
+            <span>1. แบบคัดกรอง</span>
+          </button>
+          <button id="navDashboardBtn" onclick="switchView('dashboard')" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-blue-100 hover:text-white hover:bg-white/10">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+            <span>2. สถิติและรายชื่อ</span>
+            <span id="totalBadge" class="ml-1 bg-emerald-500 text-white text-xs px-2 py-0.2 rounded-full font-bold">0</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Main Content Wrapper -->
+  <main class="flex-grow max-w-7xl mx-auto w-full p-4 sm:p-6">
+
+    <!-- VIEW 1: SCREENING FORM -->
+    <section id="viewScreening" class="block space-y-6">
+
+      <!-- Poster Campaign Highlight Card -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-blue-700 p-6 text-white shadow-lg">
+        <div class="relative z-10 max-w-3xl">
+          <div class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-2">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> กิจกรรมตรวจคัดกรองสุขภาพสมอง & สุขภาพกาย
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">ร่วมสร้างสังคมผู้สูงวัยแข็งแรง ห่างไกลสมองเสื่อม</h2>
+          <p class="text-emerald-100 text-sm mt-1">แบบประเมินสุขภาพสมองและอารมณ์สำหรับผู้สูงอายุ (2Q, 9Q, Dementia 14 ข้อ และ Geriatric Syndrome ครบวงจร)</p>
+        </div>
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+      </div>
+
+      <!-- Form Container -->
+      <form id="screeningForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+
+        <!-- Card: ข้อมูลทั่วไป -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
+            <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+              <i data-lucide="user" class="w-4 h-4"></i>
+            </span>
+            <h3 class="text-lg font-bold text-slate-800">ข้อมูลทั่วไปของผู้รับการประเมิน</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2">
+              <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
+              <input type="text" id="patientName" required placeholder="เช่น นายสมชาย ใจดี" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">อายุ (ปี) <span class="text-red-500">*</span></label>
+              <input type="number" id="patientAge" required min="40" max="120" placeholder="เช่น 68" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm transition">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ</label>
+              <select id="patientGender" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+                <option value="หญิง">หญิง</option>
+                <option value="ชาย">ชาย</option>
+                <option value="อื่นๆ">อื่นๆ</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่ทำการประเมิน</label>
+              <input type="date" id="assessmentDate" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+            </div>
+            <div class="md:col-span-3">
+              <label class="block text-xs font-semibold text-slate-600 mb-1">ลงนามผู้ประเมิน / เจ้าหน้าที่ผู้บันทึก <span class="text-red-500">*</span></label>
+              <input type="text" id="assessorName" required placeholder="ชื่อ-นามสกุล / ตำแหน่ง เจ้าหน้าที่" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION A: 2Q -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-emerald-100">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs">ตอนที่ 1</span>
+              <h3 class="text-lg font-bold text-slate-800">แบบคัดกรองภาวะซึมเศร้า 2 คำถาม (2Q)</h3>
+            </div>
+            <span id="badge2Q" class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-600">ยังไม่ประเมิน</span>
+          </div>
+
+          <p class="text-xs text-slate-500 mb-4 bg-emerald-50/70 p-2.5 rounded-lg border border-emerald-200/50">
+            💡 เกณฑ์การแปลผล: หากตอบ <strong>"มี"</strong> ข้อใดข้อหนึ่งหรือทั้งสองข้อ หมายถึง "เป็นผู้มีความเสี่ยง" มีแนวโน้มที่จะเป็นโรคซึมเศร้า ให้ประเมินต่อด้วยแบบประเมินโรคซึมเศร้า 9Q
+          </p>
+
+          <div class="space-y-3">
+            <div class="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/80 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-slate-200">
+              <span class="text-sm font-medium text-slate-700">1. ใน 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านรู้สึก <strong class="text-emerald-900">หดหู่ เศร้า หรือท้อแท้สิ้นหวัง</strong> หรือไม่</span>
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-1.5 text-sm cursor-pointer text-slate-700 font-medium">
+                  <input type="radio" name="q2_1" value="0" checked onchange="calculateAll()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                  <span>ไม่มี</span>
+                </label>
+                <label class="flex items-center gap-1.5 text-sm cursor-pointer text-red-600 font-medium">
+                  <input type="radio" name="q2_1" value="1" onchange="calculateAll()" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                  <span>มี</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/80 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-slate-200">
+              <span class="text-sm font-medium text-slate-700">2. ใน 2 สัปดาห์ที่ผ่านมา รวมวันนี้ ท่านรู้สึก <strong class="text-emerald-900">เบื่อ ทำอะไรก็ไม่เพลิดเพลิน</strong> หรือไม่</span>
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-1.5 text-sm cursor-pointer text-slate-700 font-medium">
+                  <input type="radio" name="q2_2" value="0" checked onchange="calculateAll()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                  <span>ไม่มี</span>
+                </label>
+                <label class="flex items-center gap-1.5 text-sm cursor-pointer text-red-600 font-medium">
+                  <input type="radio" name="q2_2" value="1" onchange="calculateAll()" class="w-4 h-4 text-red-600 focus:ring-red-500">
+                  <span>มี</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div id="q2AlertNotice" class="mt-4 hidden p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0 text-amber-600"></i>
+            <span>ผล 2Q พบความเสี่ยง: ขอแนะนำให้ทำแบบประเมิน 9Q ด้านล่างอย่างละเอียดเพื่อประเมินระดับความรุนแรง</span>
+          </div>
+        </div>
+
+        <!-- SECTION B: 9Q -->
+        <div id="section9Q" class="bg-white rounded-2xl p-6 shadow-sm border border-blue-100">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 font-bold text-xs">ตอนที่ 2</span>
+              <h3 class="text-lg font-bold text-slate-800">แบบประเมินโรคซึมเศร้า 9 คำถาม (9Q)</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500">คะแนนรวม: <b id="score9QText" class="text-base text-blue-700">0</b> / 27</span>
+              <span id="badge9Q" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">ไม่มีอาการหรือน้อยมาก (&lt;7)</span>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-500 mb-3">ในช่วง 2 สัปดาห์ที่ผ่านมารวมทั้งวันนี้ ท่านมีอาการเหล่านี้ บ่อยแค่ไหน</p>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="text-xs font-semibold text-slate-600 bg-slate-100/80 rounded-lg">
+                  <th class="p-3 rounded-l-lg">ข้อคำถาม</th>
+                  <th class="p-3 text-center whitespace-nowrap">ไม่มีเลย (0)</th>
+                  <th class="p-3 text-center whitespace-nowrap">1-7 วัน (1)</th>
+                  <th class="p-3 text-center whitespace-nowrap">&gt; 7 วัน (2)</th>
+                  <th class="p-3 text-center rounded-r-lg whitespace-nowrap">ทุกวัน (3)</th>
+                </tr>
+              </thead>
+              <tbody id="table9QBody" class="divide-y divide-slate-100 text-slate-700 text-xs sm:text-sm">
+                <!-- Dynamically injected rows via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION C: 14 ข้อสมรรถภาพความจำ -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-purple-100">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-purple-100 text-purple-800 font-bold text-xs">ตอนที่ 3</span>
+              <h3 class="text-lg font-bold text-slate-800">แบบคัดกรองสมรรถภาพความจำ 14 คำถาม</h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500">คะแนนรวม: <b id="scoreDementiaText" class="text-base text-purple-700">14</b> / 56</span>
+              <span id="badgeDementia" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">ปกติ (&le; 30)</span>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-600 mb-3 bg-purple-50/60 p-2.5 rounded-lg border border-purple-200/50">
+            <strong>เกณฑ์การให้คะแนน:</strong> 1 = ไม่เคยเลย/นานๆ ครั้งใน 1 ปี | 2 = ไม่บ่อยนัก 1-2 ครั้งใน 1 เดือน | 3 = ค่อนข้างบ่อย เกือบทุกสัปดาห์ | 4 = เกือบทุกวัน
+            <div class="mt-1 font-semibold text-purple-900">* หากได้คะแนนมากกว่า 30 คะแนนขึ้นไป บ่งชี้ว่าควรไปพบแพทย์เพื่อตรวจประเมินภาวะสมองเสื่อมอย่างละเอียด</div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="text-xs font-semibold text-slate-600 bg-slate-100/80 rounded-lg">
+                  <th class="p-3 rounded-l-lg">กิจกรรม / เหตุการณ์</th>
+                  <th class="p-3 text-center whitespace-nowrap">แต้ม 1</th>
+                  <th class="p-3 text-center whitespace-nowrap">แต้ม 2</th>
+                  <th class="p-3 text-center whitespace-nowrap">แต้ม 3</th>
+                  <th class="p-3 text-center rounded-r-lg whitespace-nowrap">แต้ม 4</th>
+                </tr>
+              </thead>
+              <tbody id="tableDementiaBody" class="divide-y divide-slate-100 text-slate-700 text-xs sm:text-sm">
+                <!-- Dynamically generated rows via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION D: GERIATRIC SYNDROME & ADL -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100 flex-wrap gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 font-bold text-xs">ตอนที่ 4</span>
+              <h3 class="text-lg font-bold text-slate-800">แบบประเมินกลุ่มอาการผู้สูงอายุ (Geriatric Syndrome)</h3>
+            </div>
+            <span id="badgeGeriatricSummary" class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">กำลังประเมิน</span>
+          </div>
+
+          <!-- 7 Screening Questions -->
+          <div class="space-y-3 mb-6">
+            <!-- 1. Instability -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">1. Instability (ความเสี่ยงหกล้ม):</span>
+                <p class="text-xs text-slate-600">มีประวัติหกล้มใน 1 ปีที่ผ่านมา หรือรู้สึกไม่มั่นคงเวลายืน/เดิน หรือกังวลเกี่ยวกับการหกล้ม (ใช่ข้อใดข้อหนึ่ง = ผิดปกติ)</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_instability" value="0" checked onchange="calculateAll()"> ปกติ</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_instability" value="1" onchange="calculateAll()"> ผิดปกติ (มีอาการ)</label>
+              </div>
+            </div>
+
+            <!-- 2. Inanition -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">2. Inanition (ภาวะทุพโภชนาการ):</span>
+                <p class="text-xs text-slate-600">น้ำหนักลดลง &gt; 3 กิโลกรัม ใน 3 เดือน หรือ ความอยากอาหารลดลง</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_inanition" value="0" checked onchange="calculateAll()"> ปกติ</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_inanition" value="1" onchange="calculateAll()"> ผิดปกติ</label>
+              </div>
+            </div>
+
+            <!-- 3. Urinary incontinence -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">3. Urinary Incontinence (การขับถ่ายปัสสาวะ):</span>
+                <p class="text-xs text-slate-600">มีปัสสาวะเล็ดราดจนส่งผลกระทบต่อกิจวัตรประจำวันหรือไม่</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_urinary" value="0" checked onchange="calculateAll()"> ปกติ</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_urinary" value="1" onchange="calculateAll()"> ผิดปกติ</label>
+              </div>
+            </div>
+
+            <!-- 4. Insomnia -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">4. Insomnia (การนอนหลับ):</span>
+                <p class="text-xs text-slate-600">มีอาการนอนไม่หลับจนส่งผลกระทบต่อกิจวัตรประจำวัน เช่น ง่วงนอน อ่อนเพลียตอนกลางวัน</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_insomnia" value="0" checked onchange="calculateAll()"> ปกติ</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_insomnia" value="1" onchange="calculateAll()"> ผิดปกติ</label>
+              </div>
+            </div>
+
+            <!-- 5. Impair sensory -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">5. Impair Sensory (การมองเห็น):</span>
+                <p class="text-xs text-slate-600">มีปัญหาเกี่ยวกับการมองเห็น เช่น มองระยะใกล้/ไกลลำบาก, เป็นเบาหวาน ความดัน หรือใช้ยาสเตียรอยด์/รักษาโรคตาอยู่</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_sensory" value="0" checked onchange="calculateAll()"> ปกติ</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_sensory" value="1" onchange="calculateAll()"> ผิดปกติ</label>
+              </div>
+            </div>
+
+            <!-- 6. Hearing -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">6. Hearing (การได้ยิน - Finger rub test):</span>
+                <p class="text-xs text-slate-600">คัดกรองการได้ยินด้วยเสียงถูกระดิกนิ้ว (ไม่ได้ยินข้างใดข้างหนึ่ง = ผิดปกติ)</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_hearing" value="0" checked onchange="calculateAll()"> ปกติทั้งสองข้าง</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_hearing" value="1" onchange="calculateAll()"> ผิดปกติ</label>
+              </div>
+            </div>
+
+            <!-- 7. Isolation -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div>
+                <span class="font-bold text-slate-800 text-sm">7. Isolation (ความโดดเดี่ยวทางสังคม):</span>
+                <p class="text-xs text-slate-600">อาศัยอยู่ที่บ้านคนเดียว หรือรู้สึกเหงาบ่อย</p>
+              </div>
+              <div class="flex items-center gap-4 flex-shrink-0">
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-emerald-700"><input type="radio" name="gs_isolation" value="0" checked onchange="calculateAll()"> ไม่โดดเดี่ยว/ปกติ</label>
+                <label class="flex items-center gap-1 text-xs cursor-pointer font-medium text-red-600"><input type="radio" name="gs_isolation" value="1" onchange="calculateAll()"> ผิดปกติ (เสี่ยงโดดเดี่ยว)</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sarcopenia: Yubi Wakka Test -->
+          <div class="p-4 rounded-xl bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 mb-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <i data-lucide="circle-dot" class="w-4 h-4 text-teal-600"></i>
+                8. Sarcopenia: Yubi Wakka Test (วัดเส้นรอบน่องด้วยวงนิ้วมือ)
+              </span>
+            </div>
+            <p class="text-xs text-slate-600 mb-3">
+              วิธีวัด: ให้ผู้รับการประเมินนั่งเก้าอี้ เท้าวางราบกับพื้น วัดที่น่องข้างที่ไม่ถนัด ตรงบริเวณที่กว้างที่สุด ใช้นิ้วโป้งและนิ้วชี้ทั้งสองข้างทำเป็นวงแหวนโอบรอบน่องโดยไม่บีบรัด
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <label class="flex items-center gap-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-500 transition">
+                <input type="radio" name="gs_sarcopenia" value="ต่ำ" checked onchange="calculateAll()" class="w-4 h-4 text-emerald-600">
+                <div class="text-xs">
+                  <div class="font-semibold text-slate-800">น่องใหญ่กว่าวงนิ้ว</div>
+                  <div class="text-emerald-600 font-medium">ความเสี่ยงต่ำ</div>
+                </div>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-amber-500 transition">
+                <input type="radio" name="gs_sarcopenia" value="ปานกลาง" onchange="calculateAll()" class="w-4 h-4 text-amber-600">
+                <div class="text-xs">
+                  <div class="font-semibold text-slate-800">น่องพอดีกับวงนิ้ว</div>
+                  <div class="text-amber-600 font-medium">ความเสี่ยงปานกลาง</div>
+                </div>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-red-500 transition">
+                <input type="radio" name="gs_sarcopenia" value="สูง" onchange="calculateAll()" class="w-4 h-4 text-red-600">
+                <div class="text-xs">
+                  <div class="font-semibold text-slate-800">น่องเล็กกว่าวงนิ้ว</div>
+                  <div class="text-red-600 font-medium">ความเสี่ยงสูง (กล้ามเนื้อน้อย)</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Immobility (ADL 10 items) -->
+          <div class="border-t border-slate-200 pt-5">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="font-bold text-slate-800 text-sm">9. Immobility: การประเมินความสามารถในการทำกิจวัตรประจำวัน (Barthel ADL)</h4>
+                <p class="text-xs text-slate-500">รวม 10 ข้อ เกณฑ์ประเมินการพึ่งตนเอง</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-slate-600">คะแนน ADL: <b id="scoreADLText" class="text-base text-teal-700 font-bold">20</b> / 20</span>
+                <span id="badgeADL" class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">กลุ่ม 1 พึ่งพาตนเองได้ (≥12)</span>
+              </div>
+            </div>
+
+            <div id="adlContainer" class="space-y-3">
+              <!-- Dynamically rendered 10 ADL items -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Action Bar -->
+        <div class="sticky bottom-3 z-30 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-slate-200 flex items-center justify-between flex-wrap gap-3">
+          <div class="text-xs text-slate-500">
+            <span class="font-medium text-slate-700">ตรวจสอบข้อมูลครบถ้วน:</span> ผลการประเมินจะถูกสรุปอัตโนมัติ พร้อมส่งเข้าฐานข้อมูลส่วนกลางทันที
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button type="button" onclick="resetFormToDefaults()" class="w-1/2 sm:w-auto px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition">
+              ล้างค่า
+            </button>
+            <button type="submit" id="saveScreeningBtn" class="w-1/2 sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-sm font-bold shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>บันทึกและดูผลสรุป</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- VIEW 2: STATS & SCREENED PATIENT LIST -->
+    <section id="viewDashboard" class="hidden space-y-6">
+
+      <!-- Header with Export Controls -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">สรุปสถิติ & ฐานข้อมูลผู้เข้ารับการคัดกรอง</h2>
+          <p class="text-xs text-slate-500">โครงการ ศาลายา สมองดี ชีวีมีสุข • ซิงค์ข้อมูล Real-time ทุกจุดบริการ</p>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="exportToExcel()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+            <i data-lucide="sheet" class="w-4 h-4"></i>
+            <span>Export ข้อมูล (Excel / CSV)</span>
+          </button>
+          <button onclick="switchView('screening')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>เพิ่มการคัดกรองใหม่</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Overview Metric Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center">
+            <i data-lucide="users" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">ผู้รับการคัดกรองทั้งหมด</div>
+            <div id="statTotal" class="text-2xl font-bold text-slate-800">0 คน</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+            <i data-lucide="heart-pulse" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">เสี่ยงซึมเศร้า (2Q / 9Q)</div>
+            <div id="statDepressionRisk" class="text-2xl font-bold text-red-600">0 คน</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center">
+            <i data-lucide="brain" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">ควรพบแพทย์ความจำ (>30)</div>
+            <div id="statDementiaRisk" class="text-2xl font-bold text-purple-700">0 คน</div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center">
+            <i data-lucide="activity" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="text-xs text-slate-500 font-medium">เสี่ยงหกล้ม / กลุ่มอาการ</div>
+            <div id="statGeriatricRisk" class="text-2xl font-bold text-amber-700">0 คน</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i data-lucide="pie-chart" class="w-4 h-4 text-blue-600"></i> สัดส่วนผลการคัดกรอง 4 ด้านหลัก
+          </h3>
+          <div class="h-60 flex items-center justify-center">
+            <canvas id="screeningSummaryChart"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+            <i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-600"></i> ระดับการพึ่งพาตนเอง (ADL)
+          </h3>
+          <div class="h-60 flex items-center justify-center">
+            <canvas id="adlChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patient Table and Search -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/70">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+            <input type="text" id="tableSearch" oninput="filterPatientList()" placeholder="ค้นหาชื่อ, สรุปผล หรือผู้ประเมิน..." class="w-full sm:w-64 px-3 py-1.5 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+          <div class="text-xs text-slate-500 self-end sm:self-center">
+            แสดง <span id="displayedCount">0</span> รายการ
+          </div>
+        </div>
+
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="bg-slate-100/80 text-slate-600 font-semibold border-b border-slate-200">
+                <th class="py-3 px-4">ลำดับ</th>
+                <th class="py-3 px-4">ชื่อ - นามสกุล</th>
+                <th class="py-3 px-4">อายุ/เพศ</th>
+                <th class="py-3 px-4">ซึมเศร้า (2Q/9Q)</th>
+                <th class="py-3 px-4">ความจำ (14 ข้อ)</th>
+                <th class="py-3 px-4">ADL กิจวัตร</th>
+                <th class="py-3 px-4">กลุ่มอาการ</th>
+                <th class="py-3 px-4">วันที่/ผู้ประเมิน</th>
+                <th class="py-3 px-4 text-center">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="patientTableBody" class="divide-y divide-slate-100 text-slate-700">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- MODAL: RESULT SUMMARY & RECOMMENDATION -->
+  <div id="resultModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-blue-900 via-blue-800 to-emerald-700 text-white p-5 flex items-center justify-between">
+        <div>
+          <span class="text-xs bg-white/20 px-2.5 py-0.5 rounded-full font-semibold">สรุปผลการคัดกรองทันที</span>
+          <h3 class="text-xl font-bold mt-1" id="modalPatientHeader">คุณสมชาย ใจดี</h3>
+        </div>
+        <button onclick="closeResultModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scroll">
+        <!-- Status Matrix -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="modalStatusGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Tailored Health Guidance -->
+        <div class="rounded-2xl bg-emerald-50/70 border border-emerald-200 p-4">
+          <h4 class="text-sm font-bold text-emerald-900 flex items-center gap-2 mb-2">
+            <i data-lucide="stethoscope" class="w-4 h-4 text-emerald-700"></i> คำแนะนำการดูแลสุขภาพและการส่งต่อ
+          </h4>
+          <ul id="modalRecommendations" class="space-y-1.5 text-xs text-emerald-900 list-disc list-inside">
+            <!-- Populated by JS -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-between flex-wrap gap-2">
+        <button onclick="printCurrentRecord()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold shadow transition">
+          <i data-lucide="printer" class="w-4 h-4"></i> พิมพ์ใบรายงานผล (PDF)
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeResultModal(); switchView('dashboard');" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow transition">
+            ดูตารางสถิติรวม
+          </button>
+          <button onclick="closeResultModal(); resetFormToDefaults();" class="px-4 py-2 rounded-xl border border-slate-300 hover:bg-white text-slate-700 text-xs font-semibold transition">
+            คัดกรองคนต่อไป
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINT SLIP CONTAINER (Hidden on Screen, Visible on Print) -->
+  <div id="printArea" class="hidden">
+    <div style="font-family: 'Sarabun', sans-serif; max-width: 800px; margin: 0 auto; color: #111;">
+      <!-- Print Header -->
+      <div style="text-align: center; border-bottom: 2px solid #0d47a1; padding-bottom: 12px; margin-bottom: 16px;">
+        <h2 style="font-size: 20px; font-weight: bold; margin: 0; color: #0d47a1;">แบบประเมินสุขภาพสมองและอารมณ์สำหรับผู้สูงอายุ</h2>
+        <h3 style="font-size: 16px; margin: 4px 0 0 0; color: #2e7d32;">โครงการ ศาลายา สมองดี ชีวีมีสุข</h3>
+        <p style="font-size: 12px; margin: 2px 0 0 0; color: #555;">ศูนย์การแพทย์กาญจนาภิเษก คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</p>
+      </div>
+
+      <!-- Patient Bio -->
+      <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 16px; border-bottom: 1px dashed #ccc; padding-bottom: 8px;">
+        <div><strong>ชื่อ-นามสกุล:</strong> <span id="printName">-</span></div>
+        <div><strong>อายุ:</strong> <span id="printAge">-</span> ปี</div>
+        <div><strong>เพศ:</strong> <span id="printGender">-</span></div>
+        <div><strong>วันที่ประเมิน:</strong> <span id="printDate">-</span></div>
+      </div>
+
+      <!-- Result Table -->
+      <h4 style="font-size: 15px; margin-bottom: 8px; color: #333;">สรุปผลการประเมิน (สำหรับเจ้าหน้าที่ / แพทย์)</h4>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
+        <thead>
+          <tr style="background: #f1f5f9; border: 1px solid #cbd5e1;">
+            <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: left;">รายการประเมิน</th>
+            <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">ผลคะแนน / สถานะ</th>
+            <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">สรุปผล</th>
+          </tr>
+        </thead>
+        <tbody id="printTableBody">
+          <!-- Populated dynamically -->
+        </tbody>
+      </table>
+
+      <!-- Recommendation Section -->
+      <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 30px; background: #fafafa;">
+        <strong style="font-size: 13px; color: #0d47a1;">คำแนะนำทางการแพทย์และการดูแลต่อเนื่อง:</strong>
+        <p id="printAdvice" style="font-size: 12px; margin: 6px 0 0 0; line-height: 1.6; color: #333;"></p>
+      </div>
+
+      <!-- Signatures -->
+      <div style="display: flex; justify-content: space-between; margin-top: 40px; font-size: 13px;">
+        <div style="text-align: center; width: 45%;">
+          <p style="margin-bottom: 45px;">(โปรดนำเอกสารนี้ไปพบแพทย์หรือเจ้าหน้าที่สาธารณสุข หากผลการประเมินผิดปกติ)</p>
+          <div>ลงชื่อ...............................................................</div>
+          <div>ผู้รับการตรวจ / ญาติ</div>
+        </div>
+        <div style="text-align: center; width: 45%;">
+          <div style="margin-bottom: 45px;">&nbsp;</div>
+          <div>ลงชื่อ <span id="printAssessor">-</span></div>
+          <div>(ผู้ประเมิน / เจ้าหน้าที่สาธารณสุข)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK Imports (Modular v11.6.1) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      setDoc, 
+      deleteDoc, 
+      onSnapshot, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Application state
+    window.appState = {
+      records: [],
+      activeRecord: null,
+      isSubmitting: false,
+      isDeleting: false,
+      authReady: false,
+      db: null,
+      recordsColRef: null
+    };
+
+    // Firebase Setup
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'salaya-brain-health';
+    let firebaseConfig = null;
+    try {
+      if (typeof __firebase_config !== 'undefined') {
+        firebaseConfig = JSON.parse(__firebase_config);
+      }
+    } catch (e) {
+      console.warn("Could not parse __firebase_config, falling back to local memory store:", e);
+    }
+
+    if (firebaseConfig) {
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+      window.appState.db = db;
+
+      // Strict Public Path as required: /artifacts/{appId}/public/data/{collectionName}
+      window.appState.recordsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'screenings');
+
+      // Authenticate
+      async function authenticate() {
+        try {
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+          window.appState.authReady = true;
+          document.getElementById('cloudStatus').innerHTML = `
+            <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span> Cloud ซิงค์ข้อมูลเรียลไทม์
+          `;
+          listenToData();
+        } catch (err) {
+          console.error("Firebase auth error:", err);
+          setupFallbackListener();
+        }
+      }
+
+      function listenToData() {
+        // No orderBy or complex where in Firestore to avoid indexing issues
+        onSnapshot(window.appState.recordsColRef, (snapshot) => {
+          const list = [];
+          snapshot.forEach(docSnap => {
+            list.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          // Memory sorting by date descending
+          list.sort((a, b) => (b.createdAtMillis || 0) - (a.createdAtMillis || 0));
+          window.appState.records = list;
+          renderDashboard();
+        }, (error) => {
+          console.error("Firestore onSnapshot error:", error);
+          showToast("การเชื่อมต่อฐานข้อมูลขัดข้อง ใช้โหมดสำรองในเครื่อง", "warning");
+        });
+      }
+
+      authenticate();
+    } else {
+      setupFallbackListener();
+    }
+
+    function setupFallbackListener() {
+      // In-memory fallback
+      window.appState.records = [];
+      document.getElementById('cloudStatus').innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> พร้อมใช้งาน (โหมดออฟไลน์)
+      `;
+      renderDashboard();
+    }
+
+    // Expose global actions to window for button clicks
+    window.saveRecordToCloud = async function(data) {
+      if (window.appState.isSubmitting) return;
+      window.appState.isSubmitting = true;
+      const saveBtn = document.getElementById('saveScreeningBtn');
+      const originalText = saveBtn.innerHTML;
+      saveBtn.disabled = true;
+      saveBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      saveBtn.innerHTML = `<span>กำลังบันทึก...</span>`;
+
+      try {
+        const id = data.id || ('rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5));
+        data.id = id;
+        data.createdAtMillis = data.createdAtMillis || Date.now();
+
+        if (window.appState.db && window.appState.recordsColRef) {
+          const docRef = doc(window.appState.recordsColRef, id);
+          await setDoc(docRef, data, { merge: true });
+        } else {
+          // In-memory
+          const idx = window.appState.records.findIndex(r => r.id === id);
+          if (idx >= 0) {
+            window.appState.records[idx] = data;
+          } else {
+            window.appState.records.unshift(data);
+          }
+          renderDashboard();
+        }
+
+        window.appState.activeRecord = data;
+        openResultModal(data);
+        showToast("บันทึกข้อมูลการคัดกรองเรียบร้อยแล้ว", "success");
+      } catch (err) {
+        console.error("Save error:", err);
+        showToast("เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง", "error");
+      } finally {
+        setTimeout(() => {
+          window.appState.isSubmitting = false;
+          saveBtn.disabled = false;
+          saveBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          saveBtn.innerHTML = originalText;
+        }, 800);
+      }
+    };
+
+    window.deleteRecordFromCloud = async function(id) {
+      if (window.appState.isDeleting) return;
+      window.appState.isDeleting = true;
+
+      try {
+        if (window.appState.db && window.appState.recordsColRef) {
+          const docRef = doc(window.appState.recordsColRef, id);
+          await deleteDoc(docRef);
+        } else {
+          window.appState.records = window.appState.records.filter(r => r.id !== id);
+          renderDashboard();
+        }
+        showToast("ลบข้อมูลเรียบร้อยแล้ว", "info");
+      } catch (err) {
+        console.error("Delete error:", err);
+        showToast("ไม่สามารถลบข้อมูลได้", "error");
+      } finally {
+        setTimeout(() => {
+          window.appState.isDeleting = false;
+        }, 500);
+      }
+    };
+  </script>
+
+  <script>
+    // Data definition for 9Q
+    const questions9Q = [
+      "1. เบื่อ ไม่สนใจอยากทำอะไร",
+      "2. ไม่สบายใจ ซึมเศร้า ท้อแท้",
+      "3. หลับยากหรือหลับๆตื่นๆหรือหลับมากไป",
+      "4. เหนื่อยง่ายหรือไม่ค่อยมีแรง",
+      "5. เบื่ออาหารหรือกินมากเกินไป",
+      "6. รู้สึกไม่ดีกับตัวเอง คิดว่าตัวเองล้มเหลวหรือครอบครัวผิดหวัง",
+      "7. สมาธิไม่ดี เวลาทำอะไร เช่น ดูโทรทัศน์ ฟังวิทยุ หรือทำงานที่ต้องใช้ความตั้งใจ",
+      "8. พูดช้า ทำอะไรช้าลงจนคนอื่นสังเกตเห็นได้ หรือกระสับกระส่ายไม่สามารถอยู่นิ่งได้เหมือนที่เคยเป็น",
+      "9. คิดทำร้ายตนเอง หรือคิดว่าถ้าตายไปคงจะดี"
+    ];
+
+    // Data definition for 14 Dementia items
+    const questionsDementia = [
+      "1. หาของใช้ในบ้านไม่พบ",
+      "2. จำสถานที่ที่เคยไปบ่อยๆ ไม่ได้",
+      "3. ต้องกลับไปทบทวนงานที่แม้จะตั้งใจทำซ้ำถึง 2 ครั้ง",
+      "4. ลืมสิ่งของที่ตั้งใจว่าจะนำเอาออกไปนอกบ้านด้วย",
+      "5. ลืมเรื่องที่ได้รับฟังมาเมื่อวานนี้ หรือเมื่อสองสามวันก่อน",
+      "6. ลืมเพื่อนสนิท หรือญาติสนิท หรือบุคคลที่คบหากันบ่อยๆ",
+      "7. ไม่สามารถเข้าใจเนื้อเรื่องในหนังสือพิมพ์ หรือวารสารที่อ่าน",
+      "8. ลืมบอกข้อความที่คนอื่นวานให้มาบอกอีกคนหนึ่ง",
+      "9. ลืมข้อมูลส่วนตัวของตนเอง เช่น วันเกิด ที่อยู่",
+      "10. สับสนในรายละเอียดของเรื่องที่ได้รับฟังมา",
+      "11. ลืมที่ที่เคยวางสิ่งของนั้นเป็นประจำ หรือมองหาสิ่งของนั้นในที่ที่ไม่น่าจะวางไว้",
+      "12. ขณะเดินทาง หรือเดินเล่น หรืออยู่ในอาคารที่เคยไปบ่อยๆ มักเกิดอาการหลงทิศ หรือหลงทาง",
+      "13. ต้องทำกิจวัตรประจำวันบางอย่างซ้ำถึงสองครั้ง เพราะผิดพลาด เช่น ใส่น้ำตาลมากเกินไป หรือหวีผมซ้ำ",
+      "14. เล่าเรื่องเดิมซ้ำอีกครั้งซึ่งเมื่อสักครู่เพิ่งได้เล่าเสร็จ"
+    ];
+
+    // Data definition for 10 Barthel ADL items
+    const adlItems = [
+      {
+        title: "1. การรับประทานอาหารเมื่อเตรียมสำรับไว้ต่อหน้า",
+        name: "adl_feed",
+        options: [
+          { text: "ทำได้เอง", score: 2 },
+          { text: "ทำได้เองบ้างแต่ต้องมีคนช่วย", score: 1 },
+          { text: "ทำไม่ได้", score: 0 }
+        ]
+      },
+      {
+        title: "2. ล้างหน้า หวีผม แปรงฟัน โกนหนวด (1-2 วันที่ผ่านมา)",
+        name: "adl_groom",
+        options: [
+          { text: "ทำได้เอง", score: 1 },
+          { text: "ต้องการความช่วยเหลือ", score: 0 }
+        ]
+      },
+      {
+        title: "3. ลุกนั่งจากที่นอน หรือจากเตียงไปยังเก้าอี้",
+        name: "adl_transfer",
+        options: [
+          { text: "ทำได้เอง / ไม่ต้องช่วย", score: 3 },
+          { text: "ต้องการความช่วยเหลือบ้าง", score: 2 },
+          { text: "ต้องการความช่วยเหลืออย่างมาก", score: 1 },
+          { text: "ทำไม่ได้", score: 0 }
+        ]
+      },
+      {
+        title: "4. การใช้ห้องน้ำ ห้องส้วม",
+        name: "adl_toilet",
+        options: [
+          { text: "ช่วยเหลือตัวเองได้ดี", score: 2 },
+          { text: "ทำเองได้บ้าง", score: 1 },
+          { text: "ช่วยตัวเองไม่ได้", score: 0 }
+        ]
+      },
+      {
+        title: "5. การเคลื่อนที่ภายในห้อง หรือในบ้าน",
+        name: "adl_mobility",
+        options: [
+          { text: "เดินได้เอง", score: 3 },
+          { text: "เดินได้แต่ต้องมีคนช่วยพยุง", score: 2 },
+          { text: "ต้องใช้รถเข็นแต่ไม่ต้องช่วย", score: 1 },
+          { text: "เคลื่อนที่ไปไหนไม่ได้", score: 0 }
+        ]
+      },
+      {
+        title: "6. การสวมใส่เสื้อผ้า",
+        name: "adl_dress",
+        options: [
+          { text: "ทำได้เอง", score: 2 },
+          { text: "ช่วยตัวเองได้ประมาณครึ่งหนึ่ง", score: 1 },
+          { text: "ต้องมีคนสวมใส่ให้", score: 0 }
+        ]
+      },
+      {
+        title: "7. การขึ้นลงบันได 1 ชั้น",
+        name: "adl_stairs",
+        options: [
+          { text: "ขึ้นลงได้เอง (รวมใช้เครื่องช่วยที่ถือขึ้นลงได้)", score: 2 },
+          { text: "ต้องการคนช่วย", score: 1 },
+          { text: "ไม่สามารถทำได้", score: 0 }
+        ]
+      },
+      {
+        title: "8. การอาบน้ำ",
+        name: "adl_bath",
+        options: [
+          { text: "อาบน้ำเองได้", score: 1 },
+          { text: "ต้องมีคนช่วยหรือทำให้", score: 0 }
+        ]
+      },
+      {
+        title: "9. การกลั้นถ่ายอุจจาระในระยะ 1 สัปดาห์ที่ผ่านมา",
+        name: "adl_bowel",
+        options: [
+          { text: "กลั้นได้ปกติ", score: 2 },
+          { text: "กลั้นไม่ได้บางครั้ง (< 1 ครั้ง/สัปดาห์)", score: 1 },
+          { text: "กลั้นไม่ได้เลย", score: 0 }
+        ]
+      },
+      {
+        title: "10. การกลั้นปัสสาวะในระยะ 1 สัปดาห์ที่ผ่านมา",
+        name: "adl_bladder",
+        options: [
+          { text: "กลั้นได้ปกติ", score: 2 },
+          { text: "กลั้นไม่ได้บางครั้ง (< 1 ครั้ง/วัน)", score: 1 },
+          { text: "กลั้นไม่ได้เลย", score: 0 }
+        ]
+      }
+    ];
+
+    let currentEditId = null;
+
+    // Initialize DOM
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set default date to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('assessmentDate').value = today;
+
+      buildTables();
+      calculateAll();
+      lucide.createIcons();
+    });
+
+    function buildTables() {
+      // Build 9Q Table
+      const t9 = document.getElementById('table9QBody');
+      t9.innerHTML = questions9Q.map((q, idx) => `
+        <tr class="hover:bg-blue-50/40 transition">
+          <td class="p-3 font-medium text-slate-800">${q}</td>
+          <td class="p-3 text-center">
+            <input type="radio" name="q9_${idx}" value="0" checked onchange="calculateAll()" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+          </td>
+          <td class="p-3 text-center">
+            <input type="radio" name="q9_${idx}" value="1" onchange="calculateAll()" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+          </td>
+          <td class="p-3 text-center">
+            <input type="radio" name="q9_${idx}" value="2" onchange="calculateAll()" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+          </td>
+          <td class="p-3 text-center">
+            <input type="radio" name="q9_${idx}" value="3" onchange="calculateAll()" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+          </td>
+        </tr>
+      `).join('');
+
+      // Build 14 Dementia Table
+      const td = document.getElementById('tableDementiaBody');
+      td.innerHTML = questionsDementia.map((q, idx) => `
+        <tr class="hover:bg-purple-50/40 transition">
+          <td class="p-3 font-medium text-slate-800">${q}</td>
+          <td class="p-3 text-center">
+            <input type="radio" name="qd_${idx}" value="1" checked onchange="calculateAll()" class="w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer">
+          </td>
+          <td class="p-3 text-center">
+            <input type="radio" name="qd_${idx}" value="2" onchange="calculateAll()" class="w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer">
+          </td>
+          <td class="p-3 text-center">
+            <input type="radio" name="qd_${idx}" value="3" onchange="calculateAll()" class="w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer">
+          </td>
+          <td class="p-3 text-center">
+            <input type="radio" name="qd_${idx}" value="4" onchange="calculateAll()" class="w-4 h-4 text-purple-600 focus:ring-purple-500 cursor-pointer">
+          </td>
+        </tr>
+      `).join('');
+
+      // Build ADL Items
+      const adlBox = document.getElementById('adlContainer');
+      adlBox.innerHTML = adlItems.map((item) => `
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="text-xs font-semibold text-slate-800 mb-2">${item.title}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-${item.options.length} gap-2">
+            ${item.options.map((opt, oIdx) => `
+              <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-blue-400 text-xs text-slate-700">
+                <input type="radio" name="${item.name}" value="${opt.score}" ${oIdx === 0 ? 'checked' : ''} onchange="calculateAll()" class="w-3.5 h-3.5 text-blue-600">
+                <span>${opt.text} (${opt.score} คะแนน)</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function calculateAll() {
+      // 1. 2Q Calculation
+      const q2_1 = parseInt(document.querySelector('input[name="q2_1"]:checked')?.value || 0);
+      const q2_2 = parseInt(document.querySelector('input[name="q2_2"]:checked')?.value || 0);
+      const is2QRisk = (q2_1 === 1 || q2_2 === 1);
+
+      const b2Q = document.getElementById('badge2Q');
+      const q2Notice = document.getElementById('q2AlertNotice');
+      if (is2QRisk) {
+        b2Q.className = "text-xs font-semibold px-3 py-1 rounded-full bg-red-100 text-red-700 border border-red-200";
+        b2Q.textContent = "เสี่ยงต่อภาวะซึมเศร้า";
+        q2Notice.classList.remove('hidden');
+      } else {
+        b2Q.className = "text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+        b2Q.textContent = "ปกติ (ไม่เสี่ยง)";
+        q2Notice.classList.add('hidden');
+      }
+
+      // 2. 9Q Calculation
+      let sum9Q = 0;
+      for (let i = 0; i < questions9Q.length; i++) {
+        const val = parseInt(document.querySelector(`input[name="q9_${i}"]:checked`)?.value || 0);
+        sum9Q += val;
+      }
+      document.getElementById('score9QText').textContent = sum9Q;
+      const b9Q = document.getElementById('badge9Q');
+      let status9Q = "";
+      if (sum9Q < 7) {
+        status9Q = "ไม่มีอาการของโรคซึมเศร้าหรือระดับน้อยมาก";
+        b9Q.className = "text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800";
+      } else if (sum9Q <= 12) {
+        status9Q = "มีอาการของโรคซึมเศร้า ระดับน้อย";
+        b9Q.className = "text-xs font-semibold px-3 py-1 rounded-full bg-yellow-100 text-yellow-800";
+      } else if (sum9Q <= 18) {
+        status9Q = "มีอาการของโรคซึมเศร้า ระดับปานกลาง";
+        b9Q.className = "text-xs font-semibold px-3 py-1 rounded-full bg-orange-100 text-orange-800";
+      } else {
+        status9Q = "มีอาการของโรคซึมเศร้า ระดับรุนแรง";
+        b9Q.className = "text-xs font-semibold px-3 py-1 rounded-full bg-red-100 text-red-800 font-bold";
+      }
+      b9Q.textContent = `${status9Q} (${sum9Q})`;
+
+      // 3. Dementia 14 Items
+      let sumDem = 0;
+      for (let i = 0; i < questionsDementia.length; i++) {
+        const val = parseInt(document.querySelector(`input[name="qd_${i}"]:checked`)?.value || 1);
+        sumDem += val;
+      }
+      document.getElementById('scoreDementiaText').textContent = sumDem;
+      const bDem = document.getElementById('badgeDementia');
+      if (sumDem > 30) {
+        bDem.className = "text-xs font-semibold px-3 py-1 rounded-full bg-red-100 text-red-800 border border-red-200 font-bold";
+        bDem.textContent = `ผิดปกติ / ควรพบแพทย์ (${sumDem} คะแนน)`;
+      } else {
+        bDem.className = "text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+        bDem.textContent = `ปกติ (${sumDem} คะแนน)`;
+      }
+
+      // 4. Geriatric Syndrome
+      const gsInstability = parseInt(document.querySelector('input[name="gs_instability"]:checked')?.value || 0);
+      const gsInanition = parseInt(document.querySelector('input[name="gs_inanition"]:checked')?.value || 0);
+      const gsUrinary = parseInt(document.querySelector('input[name="gs_urinary"]:checked')?.value || 0);
+      const gsInsomnia = parseInt(document.querySelector('input[name="gs_insomnia"]:checked')?.value || 0);
+      const gsSensory = parseInt(document.querySelector('input[name="gs_sensory"]:checked')?.value || 0);
+      const gsHearing = parseInt(document.querySelector('input[name="gs_hearing"]:checked')?.value || 0);
+      const gsIsolation = parseInt(document.querySelector('input[name="gs_isolation"]:checked')?.value || 0);
+      const gsSarcopenia = document.querySelector('input[name="gs_sarcopenia"]:checked')?.value || "ต่ำ";
+
+      const abnormalFlags = [gsInstability, gsInanition, gsUrinary, gsInsomnia, gsSensory, gsHearing, gsIsolation].filter(v => v === 1).length;
+      const bGS = document.getElementById('badgeGeriatricSummary');
+      if (abnormalFlags > 0 || gsSarcopenia === "สูง") {
+        bGS.className = "text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-800";
+        bGS.textContent = `พบความเสี่ยง ${abnormalFlags} ด้าน ${gsSarcopenia === 'สูง' ? '+ น่องเล็ก' : ''}`;
+      } else {
+        bGS.className = "text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800";
+        bGS.textContent = "ปกติทุกด้าน";
+      }
+
+      // 5. ADL Calculation
+      let sumADL = 0;
+      adlItems.forEach(item => {
+        const val = parseInt(document.querySelector(`input[name="${item.name}"]:checked')?.value || 0);
+        sumADL += val;
+      });
+      document.getElementById('scoreADLText').textContent = sumADL;
+      const bADL = document.getElementById('badgeADL');
+      let adlGroup = "";
+      if (sumADL >= 12) {
+        adlGroup = "กลุ่มที่ 1 พึ่งพาตนเองได้ดี (≥12)";
+        bADL.className = "text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800";
+      } else if (sumADL >= 5) {
+        adlGroup = "กลุ่มที่ 2 พึ่งพาตนเองได้ปานกลาง (5-11)";
+        bADL.className = "text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-800";
+      } else {
+        adlGroup = "กลุ่มที่ 3 พึ่งพาตนเองไม่ได้ (≤4)";
+        bADL.className = "text-xs font-semibold px-3 py-1 rounded-full bg-red-100 text-red-800 font-bold";
+      }
+      bADL.textContent = adlGroup;
+
+      return {
+        q2_risk: is2QRisk,
+        score9Q: sum9Q,
+        status9Q: status9Q,
+        scoreDementia: sumDem,
+        isDementiaAbnormal: sumDem > 30,
+        geriatricAbnormalCount: abnormalFlags,
+        sarcopenia: gsSarcopenia,
+        scoreADL: sumADL,
+        adlGroup: adlGroup
+      };
+    }
+
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      const patientName = document.getElementById('patientName').value.trim();
+      const patientAge = parseInt(document.getElementById('patientAge').value);
+      const patientGender = document.getElementById('patientGender').value;
+      const assessmentDate = document.getElementById('assessmentDate').value;
+      const assessorName = document.getElementById('assessorName').value.trim();
+
+      if (!patientName || isNaN(patientAge) || !assessorName) {
+        showToast("กรุณากรอกข้อมูลผู้รับการประเมินและชื่อผู้ประเมินให้ครบถ้วน", "warning");
+        return;
+      }
+
+      const calculated = calculateAll();
+
+      // Collect specific question breakdown
+      const q9Details = [];
+      for (let i = 0; i < questions9Q.length; i++) {
+        q9Details.push(parseInt(document.querySelector(`input[name="q9_${i}"]:checked`)?.value || 0));
+      }
+
+      const qDemDetails = [];
+      for (let i = 0; i < questionsDementia.length; i++) {
+        qDemDetails.push(parseInt(document.querySelector(`input[name="qd_${i}"]:checked`)?.value || 1));
+      }
+
+      const record = {
+        id: currentEditId || null,
+        name: patientName,
+        age: patientAge,
+        gender: patientGender,
+        date: assessmentDate,
+        assessor: assessorName,
+        is2QRisk: calculated.q2_risk,
+        score9Q: calculated.score9Q,
+        status9Q: calculated.status9Q,
+        scoreDementia: calculated.scoreDementia,
+        isDementiaAbnormal: calculated.isDementiaAbnormal,
+        geriatric: {
+          instability: parseInt(document.querySelector('input[name="gs_instability"]:checked')?.value || 0),
+          inanition: parseInt(document.querySelector('input[name="gs_inanition"]:checked')?.value || 0),
+          urinary: parseInt(document.querySelector('input[name="gs_urinary"]:checked')?.value || 0),
+          insomnia: parseInt(document.querySelector('input[name="gs_insomnia"]:checked')?.value || 0),
+          sensory: parseInt(document.querySelector('input[name="gs_sensory"]:checked')?.value || 0),
+          hearing: parseInt(document.querySelector('input[name="gs_hearing"]:checked')?.value || 0),
+          isolation: parseInt(document.querySelector('input[name="gs_isolation"]:checked')?.value || 0),
+          sarcopenia: calculated.sarcopenia,
+          abnormalCount: calculated.geriatricAbnormalCount
+        },
+        scoreADL: calculated.scoreADL,
+        adlGroup: calculated.adlGroup,
+        q9Details: q9Details,
+        qDemDetails: qDemDetails
+      };
+
+      // Call cloud persistence
+      window.saveRecordToCloud(record);
+      currentEditId = null;
+    }
+
+    function openResultModal(data) {
+      document.getElementById('modalPatientHeader').textContent = `${data.name} (อายุ ${data.age} ปี, เพศ ${data.gender})`;
+
+      const grid = document.getElementById('modalStatusGrid');
+      grid.innerHTML = `
+        <div class="p-3.5 rounded-2xl border ${data.is2QRisk ? 'bg-red-50/70 border-red-200' : 'bg-emerald-50/70 border-emerald-200'}">
+          <div class="text-xs text-slate-500 font-medium">คัดกรองซึมเศร้า 2Q</div>
+          <div class="text-sm font-bold mt-1 ${data.is2QRisk ? 'text-red-700' : 'text-emerald-700'}">
+            ${data.is2QRisk ? '⚠️ พบความเสี่ยง' : '✓ ปกติ'}
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl border ${data.score9Q >= 7 ? 'bg-amber-50/70 border-amber-200' : 'bg-emerald-50/70 border-emerald-200'}">
+          <div class="text-xs text-slate-500 font-medium">แบบประเมิน 9Q</div>
+          <div class="text-sm font-bold mt-1 ${data.score9Q >= 7 ? 'text-amber-800' : 'text-emerald-700'}">
+            ${data.score9Q} คะแนน (${data.status9Q})
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl border ${data.isDementiaAbnormal ? 'bg-purple-50 border-purple-200' : 'bg-emerald-50/70 border-emerald-200'}">
+          <div class="text-xs text-slate-500 font-medium">สมรรถภาพความจำ (14 ข้อ)</div>
+          <div class="text-sm font-bold mt-1 ${data.isDementiaAbnormal ? 'text-purple-900' : 'text-emerald-700'}">
+            ${data.scoreDementia} คะแนน ${data.isDementiaAbnormal ? '⚠️ ควรพบแพทย์' : '✓ เกณฑ์ปกติ (≤30)'}
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl border bg-slate-50 border-slate-200">
+          <div class="text-xs text-slate-500 font-medium">ADL & อาการผู้สูงอายุ</div>
+          <div class="text-sm font-bold mt-1 text-slate-800">
+            ADL: ${data.scoreADL} คะแนน | สภาวะกล้ามเนื้อ: ${data.geriatric.sarcopenia}
+          </div>
+        </div>
+      `;
+
+      // Build specific medical guidance
+      const adviceList = [];
+      if (data.isDementiaAbnormal) {
+        adviceList.push("สมรรถภาพความจำได้คะแนนเกิน 30 คะแนน: ควรส่งต่อพบแพทย์เพื่อตรวจแบบประเมิน MoCA หรือ TMSE และส่งต่อศูนย์การแพทย์กาญจนาภิเษกเพื่อวินิจฉัยสมองเสื่อมละเอียด");
+      } else {
+        adviceList.push("สมรรถภาพความจำอยู่ในเกณฑ์ปกติ แนะนำกิจกรรมกระตุ้นสมองอย่างต่อเนื่อง เช่น การฝึกคิดเลข อ่านหนังสือ สานสัมพันธ์ชุมชน");
+      }
+
+      if (data.score9Q >= 13) {
+        adviceList.push("แบบประเมิน 9Q มีอาการระดับปานกลางถึงรุนแรง: ควรได้รับการประเมินแบบ 8Q (ภาวะเสี่ยงฆ่าตัวตาย) และปรึกษาจิตแพทย์หรือพยาบาลจิตเวช");
+      } else if (data.score9Q >= 7 || data.is2QRisk) {
+        adviceList.push("พบความเสี่ยงซึมเศร้าเล็กน้อย: แนะนำการพูดคุยระบายความรู้สึก ปรับเปลี่ยนสิ่งแวดล้อม และนัดติดตามผลใน 2-4 สัปดาห์");
+      }
+
+      if (data.geriatric.instability === 1) {
+        adviceList.push("มีความเสี่ยงต่อการหกล้ม (Instability): แนะนำจัดบ้านให้ปลอดภัย หลีกเลี่ยงพื้นลื่น ติดตั้งราวจับ และฝึกการทรงตัว");
+      }
+
+      if (data.geriatric.sarcopenia === 'สูง') {
+        adviceList.push("มีความเสี่ยงภาวะกล้ามเนื้อน้อย (Sarcopenia): แนะนำเพิ่มโปรตีนคุณภาพดีในอาหาร เช่น ไข่ขาว เต้าหู้ ปลา และออกกำลังกายเพิ่มแรงต้าน");
+      }
+
+      if (data.scoreADL < 12) {
+        adviceList.push("คะแนน ADL บ่งชี้การพึ่งพาผู้อื่น: แนะนำผู้ดูแลให้การดูแลใกล้ชิดในการทำกิจวัตรประจำวันเพื่อความปลอดภัย");
+      }
+
+      const adviceContainer = document.getElementById('modalRecommendations');
+      adviceContainer.innerHTML = adviceList.map(a => `<li>${a}</li>`).join('');
+
+      document.getElementById('resultModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeResultModal() {
+      document.getElementById('resultModal').classList.add('hidden');
+    }
+
+    function resetFormToDefaults() {
+      currentEditId = null;
+      document.getElementById('screeningForm').reset();
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('assessmentDate').value = today;
+      calculateAll();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function printCurrentRecord() {
+      const data = window.appState.activeRecord;
+      if (!data) return;
+
+      document.getElementById('printName').textContent = data.name;
+      document.getElementById('printAge').textContent = data.age;
+      document.getElementById('printGender').textContent = data.gender;
+      document.getElementById('printDate').textContent = data.date;
+      document.getElementById('printAssessor').textContent = data.assessor;
+
+      const tb = document.getElementById('printTableBody');
+      tb.innerHTML = `
+        <tr>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;">แบบคัดกรองภาวะซึมเศร้า 2Q</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">${data.is2QRisk ? 'มีอาการใน 2 สัปดาห์' : 'ไม่มีอาการ'}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; color: ${data.is2QRisk ? '#b91c1c' : '#15803d'};">
+            ${data.is2QRisk ? '[  ] ปกติ  [ ✓ ] เสี่ยง' : '[ ✓ ] ปกติ  [  ] เสี่ยง'}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;">แบบคัดกรองภาวะซึมเศร้า 9Q</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">คะแนนรวม: ${data.score9Q} / 27</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; color: ${data.score9Q >= 7 ? '#b91c1c' : '#15803d'};">
+            ${data.score9Q < 7 ? '[ ✓ ] ปกติ  [  ] มีอาการของโรคซึมเศร้า' : '[  ] ปกติ  [ ✓ ] มีอาการของโรคซึมเศร้า'}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;">แบบคัดกรองสมรรถภาพความจำ (14 ข้อ)</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">คะแนนรวม: ${data.scoreDementia} (เกณฑ์ > 30)</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; color: ${data.isDementiaAbnormal ? '#b91c1c' : '#15803d'};">
+            ${data.isDementiaAbnormal ? '[  ] ปกติ  [ ✓ ] ควรปรึกษาแพทย์' : '[ ✓ ] ปกติ  [  ] ควรปรึกษาแพทย์'}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #cbd5e1;">แบบคัดกรองกลุ่มอาการผู้สูงอายุ & ADL</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">ADL: ${data.scoreADL} คะแนน | เสี่ยงกล้ามเนื้อน้อย: ${data.geriatric.sarcopenia}</td>
+          <td style="padding: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; color: ${data.scoreADL < 12 || data.geriatric.abnormalCount > 0 ? '#b91c1c' : '#15803d'};">
+            ${data.scoreADL < 12 || data.geriatric.abnormalCount > 0 ? '[  ] ปกติ  [ ✓ ] ควรปรึกษาแพทย์' : '[ ✓ ] ปกติ  [  ] ควรปรึกษาแพทย์'}
+          </td>
+        </tr>
+      `;
+
+      // Advice text for print
+      const recItems = [];
+      if (data.isDementiaAbnormal) recItems.push("- สมรรถภาพความจำคะแนนเกิน 30 คะแนน แนะนำส่งต่อแพทย์ตรวจวินิจฉัยภาวะสมองเสื่อม");
+      if (data.score9Q >= 7) recItems.push(`- ผล 9Q ได้ ${data.score9Q} คะแนน (${data.status9Q}) ควรพบเจ้าหน้าที่สุขภาพจิต`);
+      if (data.geriatric.instability === 1) recItems.push("- มีความเสี่ยงต่อการหกล้ม ควรระมัดระวังและปรับสภาพแวดล้อมที่อยู่อาศัย");
+      if (recItems.length === 0) recItems.push("- ผลการประเมินอยู่ในเกณฑ์ปกติทุกรายการ แนะนำดูแลสุขภาพสม่ำเสมอ");
+
+      document.getElementById('printAdvice').innerHTML = recItems.join('<br>');
+
+      // Invoke print
+      window.print();
+    }
+
+    function switchView(viewName) {
+      const scr = document.getElementById('viewScreening');
+      const dash = document.getElementById('viewDashboard');
+      const btnScr = document.getElementById('navScreeningBtn');
+      const btnDash = document.getElementById('navDashboardBtn');
+
+      if (viewName === 'screening') {
+        scr.classList.remove('hidden');
+        dash.classList.add('hidden');
+        btnScr.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition bg-white text-blue-900 shadow";
+        btnDash.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition text-blue-100 hover:text-white hover:bg-white/10";
+      } else {
+        scr.classList.add('hidden');
+        dash.classList.remove('hidden');
+        btnDash.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition bg-white text-blue-900 shadow";
+        btnScr.className = "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition text-blue-100 hover:text-white hover:bg-white/10";
+        renderDashboard();
+      }
+      lucide.createIcons();
+    }
+
+    let summaryChartInstance = null;
+    let adlChartInstance = null;
+
+    function renderDashboard() {
+      const records = window.appState.records || [];
+      const totalCount = records.length;
+      document.getElementById('totalBadge').textContent = totalCount;
+      document.getElementById('statTotal').textContent = `${totalCount} คน`;
+
+      // Stats calculation
+      let depCount = 0;
+      let demCount = 0;
+      let gerCount = 0;
+      let adlGroup1 = 0;
+      let adlGroup2 = 0;
+      let adlGroup3 = 0;
+
+      records.forEach(r => {
+        if (r.is2QRisk || r.score9Q >= 7) depCount++;
+        if (r.isDementiaAbnormal) demCount++;
+        if (r.geriatric?.instability === 1 || r.geriatric?.sarcopenia === 'สูง') gerCount++;
+
+        if (r.scoreADL >= 12) adlGroup1++;
+        else if (r.scoreADL >= 5) adlGroup2++;
+        else adlGroup3++;
+      });
+
+      document.getElementById('statDepressionRisk').textContent = `${depCount} คน`;
+      document.getElementById('statDementiaRisk').textContent = `${demCount} คน`;
+      document.getElementById('statGeriatricRisk').textContent = `${gerCount} คน`;
+
+      // Render Charts
+      renderCharts({
+        total: totalCount,
+        dep: depCount,
+        dem: demCount,
+        ger: gerCount,
+        adl1: adlGroup1,
+        adl2: adlGroup2,
+        adl3: adlGroup3
+      });
+
+      // Render Table
+      filterPatientList();
+    }
+
+    function renderCharts(stats) {
+      const ctx1 = document.getElementById('screeningSummaryChart');
+      const ctx2 = document.getElementById('adlChart');
+      if (!ctx1 || !ctx2) return;
+
+      if (summaryChartInstance) summaryChartInstance.destroy();
+      if (adlChartInstance) adlChartInstance.destroy();
+
+      // Chart 1: Donut Summary
+      summaryChartInstance = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: ['ปกติทั้งหมด', 'เสี่ยงซึมเศร้า', 'ความจำผิดปกติ (>30)', 'เสี่ยงกลุ่มอาการผู้สูงวัย'],
+          datasets: [{
+            data: [
+              Math.max(0, stats.total - (stats.dep + stats.dem + stats.ger)),
+              stats.dep,
+              stats.dem,
+              stats.ger
+            ],
+            backgroundColor: ['#10b981', '#ef4444', '#a855f7', '#f59e0b'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Sarabun', size: 11 } } }
+          }
+        }
+      });
+
+      // Chart 2: ADL Bar Chart
+      adlChartInstance = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: ['กลุ่ม 1 พึ่งตนเองได้ (≥12)', 'กลุ่ม 2 พึ่งตนเองปานกลาง (5-11)', 'กลุ่ม 3 พึ่งตนเองไม่ได้ (≤4)'],
+          datasets: [{
+            label: 'จำนวนคน',
+            data: [stats.adl1, stats.adl2, stats.adl3],
+            backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } }
+          }
+        }
+      });
+    }
+
+    function filterPatientList() {
+      const query = document.getElementById('tableSearch')?.value.toLowerCase() || '';
+      const records = window.appState.records || [];
+      const filtered = records.filter(r => {
+        return (
+          r.name?.toLowerCase().includes(query) ||
+          r.assessor?.toLowerCase().includes(query) ||
+          r.status9Q?.toLowerCase().includes(query)
+        );
+      });
+
+      document.getElementById('displayedCount').textContent = filtered.length;
+      const tbody = document.getElementById('patientTableBody');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="p-8 text-center text-slate-400">
+              <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 stroke-1"></i>
+              ยังไม่มีข้อมูลการคัดกรอง หรือไม่พบรายการที่ค้นหา
+            </td>
+          </tr>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((item, index) => {
+        const isDepRisk = item.is2QRisk || item.score9Q >= 7;
+        return `
+          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+            <td class="py-3 px-4 text-slate-400 font-mono">${index + 1}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${item.name}</td>
+            <td class="py-3 px-4 text-slate-600">${item.age} ปี / ${item.gender}</td>
+            <td class="py-3 px-4">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${isDepRisk ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-800'}">
+                ${item.score9Q} คะแนน (${isDepRisk ? 'เสี่ยง' : 'ปกติ'})
+              </span>
+            </td>
+            <td class="py-3 px-4">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${item.isDementiaAbnormal ? 'bg-purple-100 text-purple-800 font-bold' : 'bg-slate-100 text-slate-700'}">
+                ${item.scoreDementia} แต้ม ${item.isDementiaAbnormal ? '⚠️ พบแพทย์' : 'ปกติ'}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-xs">
+              <span class="font-medium text-slate-700">${item.scoreADL} คะแนน</span>
+            </td>
+            <td class="py-3 px-4 text-xs">
+              ${item.geriatric?.instability === 1 ? '<span class="text-red-600 font-semibold">เสี่ยงล้ม</span> ' : ''}
+              ${item.geriatric?.sarcopenia === 'สูง' ? '<span class="text-amber-600 font-semibold">น่องเล็ก</span>' : ''}
+              ${item.geriatric?.instability !== 1 && item.geriatric?.sarcopenia !== 'สูง' ? '<span class="text-emerald-700">ปกติ</span>' : ''}
+            </td>
+            <td class="py-3 px-4 text-slate-500 text-xs">
+              <div>${item.date}</div>
+              <div class="text-[11px] text-slate-400 font-light">${item.assessor}</div>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <div class="inline-flex items-center gap-1">
+                <button onclick="viewRecordDetail('${item.id}')" title="ดูสรุป & พิมพ์" class="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 transition">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+                <button onclick="editRecord('${item.id}')" title="แก้ไข" class="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 transition">
+                  <i data-lucide="edit" class="w-4 h-4"></i>
+                </button>
+                <button onclick="confirmDeleteRecord('${item.id}', '${item.name}')" title="ลบข้อมูล" class="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function viewRecordDetail(id) {
+      const record = window.appState.records.find(r => r.id === id);
+      if (!record) return;
+      window.appState.activeRecord = record;
+      openResultModal(record);
+    }
+
+    function editRecord(id) {
+      const record = window.appState.records.find(r => r.id === id);
+      if (!record) return;
+
+      currentEditId = record.id;
+      document.getElementById('patientName').value = record.name;
+      document.getElementById('patientAge').value = record.age;
+      document.getElementById('patientGender').value = record.gender;
+      document.getElementById('assessmentDate').value = record.date;
+      document.getElementById('assessorName').value = record.assessor;
+
+      // Fill 2Q
+      if (record.is2QRisk) {
+        document.querySelector('input[name="q2_1"][value="1"]').checked = true;
+      }
+
+      // Fill 9Q if stored
+      if (record.q9Details && record.q9Details.length === questions9Q.length) {
+        record.q9Details.forEach((val, i) => {
+          const radio = document.querySelector(`input[name="q9_${i}"][value="${val}"]`);
+          if (radio) radio.checked = true;
+        });
+      }
+
+      // Fill Dementia if stored
+      if (record.qDemDetails && record.qDemDetails.length === questionsDementia.length) {
+        record.qDemDetails.forEach((val, i) => {
+          const radio = document.querySelector(`input[name="qd_${i}"][value="${val}"]`);
+          if (radio) radio.checked = true;
+        });
+      }
+
+      // Fill Geriatric
+      if (record.geriatric) {
+        if (document.querySelector(`input[name="gs_instability"][value="${record.geriatric.instability}"]`))
+          document.querySelector(`input[name="gs_instability"][value="${record.geriatric.instability}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_inanition"][value="${record.geriatric.inanition}"]`))
+          document.querySelector(`input[name="gs_inanition"][value="${record.geriatric.inanition}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_urinary"][value="${record.geriatric.urinary}"]`))
+          document.querySelector(`input[name="gs_urinary"][value="${record.geriatric.urinary}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_insomnia"][value="${record.geriatric.insomnia}"]`))
+          document.querySelector(`input[name="gs_insomnia"][value="${record.geriatric.insomnia}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_sensory"][value="${record.geriatric.sensory}"]`))
+          document.querySelector(`input[name="gs_sensory"][value="${record.geriatric.sensory}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_hearing"][value="${record.geriatric.hearing}"]`))
+          document.querySelector(`input[name="gs_hearing"][value="${record.geriatric.hearing}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_isolation"][value="${record.geriatric.isolation}"]`))
+          document.querySelector(`input[name="gs_isolation"][value="${record.geriatric.isolation}"]`).checked = true;
+        if (document.querySelector(`input[name="gs_sarcopenia"][value="${record.geriatric.sarcopenia}"]`))
+          document.querySelector(`input[name="gs_sarcopenia"][value="${record.geriatric.sarcopenia}"]`).checked = true;
+      }
+
+      calculateAll();
+      switchView('screening');
+      showToast(`กำลังแก้ไขข้อมูลของ ${record.name}`, "info");
+    }
+
+    function confirmDeleteRecord(id, name) {
+      // In-app custom confirmation modal without browser alert/confirm
+      const modal = document.createElement('div');
+      modal.className = "fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4";
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200">
+          <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="alert-circle" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 text-center">ยืนยันการลบข้อมูล?</h3>
+          <p class="text-xs text-slate-500 text-center mt-1">คุณต้องการลบข้อมูลการคัดกรองของ <b>${name}</b> ออกจากระบบคลาวด์ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+          <div class="flex items-center gap-2 mt-5">
+            <button id="cancelDelBtn" class="flex-1 px-4 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50">ยกเลิก</button>
+            <button id="confirmDelBtn" class="flex-1 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-xs font-semibold text-white shadow">ลบข้อมูล</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      lucide.createIcons();
+
+      modal.querySelector('#cancelDelBtn').onclick = () => modal.remove();
+      modal.querySelector('#confirmDelBtn').onclick = async () => {
+        modal.remove();
+        await window.deleteRecordFromCloud(id);
+      };
+    }
+
+    // Export to CSV/Excel with Thai UTF-8 BOM
+    function exportToExcel() {
+      const records = window.appState.records || [];
+      if (records.length === 0) {
+        showToast("ยังไม่มีข้อมูลสำหรับ Export", "warning");
+        return;
+      }
+
+      const headers = [
+        "ลำดับ", "ชื่อ-นามสกุล", "อายุ", "เพศ", "วันที่ประเมิน", "ผู้ประเมิน",
+        "ผล 2Q", "คะแนน 9Q", "สถานะ 9Q", "คะแนนความจำ 14 ข้อ", "ผลความจำ (ผิดปกติถ้า >30)",
+        "คะแนน ADL", "กลุ่ม ADL", "หกล้ม (Instability)", "ทุพโภชนาการ (Inanition)", 
+        "ปัสสาวะเล็ด (Urinary)", "นอนไม่หลับ (Insomnia)", "การมองเห็น (Sensory)", 
+        "การได้ยิน (Hearing)", "โดดเดี่ยว (Isolation)", "ภาวะกล้ามเนื้อน้อย (Sarcopenia)"
+      ];
+
+      const csvRows = [headers.join(',')];
+
+      records.forEach((r, idx) => {
+        const row = [
+          idx + 1,
+          `"${r.name || ''}"`,
+          r.age || '',
+          `"${r.gender || ''}"`,
+          `"${r.date || ''}"`,
+          `"${r.assessor || ''}"`,
+          r.is2QRisk ? '"เสี่ยง"' : '"ปกติ"',
+          r.score9Q || 0,
+          `"${r.status9Q || ''}"`,
+          r.scoreDementia || 0,
+          r.isDementiaAbnormal ? '"ผิดปกติ (ควรพบแพทย์)"' : '"ปกติ"',
+          r.scoreADL || 0,
+          `"${r.adlGroup || ''}"`,
+          r.geriatric?.instability === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          r.geriatric?.inanition === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          r.geriatric?.urinary === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          r.geriatric?.insomnia === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          r.geriatric?.sensory === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          r.geriatric?.hearing === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          r.geriatric?.isolation === 1 ? '"ผิดปกติ"' : '"ปกติ"',
+          `"${r.geriatric?.sarcopenia || 'ต่ำ'}"`
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      // Thai UTF-8 BOM so Excel opens Thai characters seamlessly
+      const bom = "\uFEFF";
+      const csvContent = bom + csvRows.join("\r\n");
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const timestamp = new Date().toISOString().slice(0,10);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `รายงานคัดกรอง_ศาลายาสมองดีชีวีมีสุข_${timestamp}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("สร้างไฟล์ Excel/CSV เรียบร้อยแล้ว", "success");
+    }
+
+    // Custom non-intrusive toast notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      let bg = 'bg-slate-800 text-white';
+      let icon = 'info';
+      if (type === 'success') {
+        bg = 'bg-emerald-600 text-white';
+        icon = 'check-circle';
+      } else if (type === 'warning') {
+        bg = 'bg-amber-500 text-white';
+        icon = 'alert-triangle';
+      } else if (type === 'error') {
+        bg = 'bg-red-600 text-white';
+        icon = 'x-circle';
+      }
+
+      toast.className = `${bg} px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs sm:text-sm font-medium transition transform translate-y-4 opacity-0 pointer-events-auto border border-white/20`;
+      toast.innerHTML = `
+        <i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i>
+        <span>${message}</span>
+      `;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      // Trigger transition
+      setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      }, 10);
+
+      // Auto remove
+      setTimeout(() => {
+        toast.classList.add('translate-y-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
